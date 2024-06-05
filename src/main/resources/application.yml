@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/usedtrad
+    username: owner
+    password: 1234
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+      use-new-id-generator-mapping: false
+
+  jwt :
+    header: Authorization
+    secret: efnsoifh32y9t8y4rghefjdgivfoehfwe9t4hrefjvr9gt4guaerivjqir39tguerifvgwrdfjeowjoeoASFeo9283GRERgjhfv3i9138NDVSIREg
+    token-validity-in-seconds:
+
+server:
+  port: 8001
