@@ -2,13 +2,12 @@ package SenierProject.BlockDeal.controller;
 
 import SenierProject.BlockDeal.dto.RequestMemberDto;
 import SenierProject.BlockDeal.service.JoinService;
-import SenierProject.BlockDeal.service.MemberService;
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 @ResponseBody
 @AllArgsConstructor
 public class JoinMemberController {
