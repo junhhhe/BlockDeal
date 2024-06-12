@@ -1,5 +1,6 @@
 package SenierProject.BlockDeal.entity;
 
+import SenierProject.BlockDeal.jwt.MemberRole;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,11 +16,11 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String password;
-
-    @Column(nullable = false)
     private String username;
 
-    private String role;
+    private String password;
+
+    private String name;
+
+    private MemberRole role;
 }

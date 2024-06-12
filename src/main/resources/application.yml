@@ -8,13 +8,16 @@ spring:
     open-in-view: false
     show-sql: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
       use-new-id-generator-mapping: false
 
   jwt :
     header: Authorization
     secret: efnsoifh32y9t8y4rghefjdgivfoehfwe9t4hrefjvr9gt4guaerivjqir39tguerifvgwrdfjeowjoeoASFeo9283GRERgjhfv3i9138NDVSIREg
     token-validity-in-seconds:
+  mvc:
+    locale:
+      timezone: Asia/Seoul
 
 server:
   port: 8001

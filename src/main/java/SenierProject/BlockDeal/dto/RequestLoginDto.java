@@ -1,9 +1,11 @@
 package SenierProject.BlockDeal.dto;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-public class RequestMemberDto {
+@NoArgsConstructor
+public class RequestLoginDto {
 
     private String username;
     private String password;
