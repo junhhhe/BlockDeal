@@ -1,18 +1,19 @@
 package SenierProject.BlockDeal.controller;
 
+import SenierProject.BlockDeal.dto.ApiResponse;
 import SenierProject.BlockDeal.dto.CustomUserDetails;
 import SenierProject.BlockDeal.dto.RequestJoinDto;
 import SenierProject.BlockDeal.dto.RequestLoginDto;
 import SenierProject.BlockDeal.entity.Member;
 import SenierProject.BlockDeal.jwt.JWTUtil;
 import SenierProject.BlockDeal.repository.MemberJpaRepository;
-import SenierProject.BlockDeal.service.JoinService;
+import SenierProject.BlockDeal.service.MemberService;
 import lombok.RequiredArgsConstructor;
-
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,18 +25,14 @@ import java.util.Iterator;
 @RequestMapping("/api/users")
 public class MemberController {
 
-    private final JoinService joinService;
+    private final MemberService memberService;
     private final JWTUtil jwtUtil;
     private final MemberJpaRepository memberJpaRepository;
 
     @GetMapping("/")
-    public String home(Model model) {
-
-        model.addAttribute("loginType", "jwt-login");
-        model.addAttribute("pageName", "스프링 시큐리티 JWT 로그인");
+    public ResponseEntity<ApiResponse<String>> home() {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
@@ -43,78 +40,64 @@ public class MemberController {
         GrantedAuthority auth = iter.next();
         String role = auth.getAuthority();
 
-        /*Member loginMember = joinService.getLoginMemberById(loginId);
+        String responseMessage = "MemberController: " + username + ", " + role;
 
-        if (loginMember != null) {
-            model.addAttribute("name", loginMember.getName());
-        }*/
-
-        return "MemberController: " + username + ", "+ role;
+        return ResponseEntity.ok(new ApiResponse<>(true, "성공", responseMessage));
     }
 
     @GetMapping("/join")
-    public String joinPage(Model model) {
+    public ResponseEntity<ApiResponse<RequestJoinDto>> joinPage() {
 
-        model.addAttribute("loginType", "jwt-login");
-        model.addAttribute("pageName", "스프링 시큐리티 JWT 로그인");
+        RequestJoinDto joinRequest = new RequestJoinDto();
 
-        // 회원가입을 위해서 model 통해서 joinRequest 전달
-        model.addAttribute("joinRequest", new RequestJoinDto());
-        return "join";
+        return ResponseEntity.ok(new ApiResponse<>(true, "회원가입 페이지", joinRequest));
     }
 
     @PostMapping("/join")
-    public String join(@ModelAttribute RequestJoinDto joinRequest, BindingResult bindingResult, Model model) {
+    public ResponseEntity<ApiResponse<String>> join(@RequestBody RequestJoinDto joinRequest, BindingResult bindingResult) {
 
-        model.addAttribute("loginType", "jwt-login");
-        model.addAttribute("pageName", "스프링 시큐리티 JWT 로그인");
-
-        // ID 중복 여부 확인
-        if (joinService.checkLoginIdDuplicate(joinRequest.getUsername())) {
-            return "ID가 존재합니다.";
+        if (memberService.checkLoginIdDuplicate(joinRequest.getUsername())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new ApiResponse<>(false, "ID가 존재합니다.", null));
         }
 
-
-        // 비밀번호 = 비밀번호 체크 여부 확인
         if (!joinRequest.getPassword().equals(joinRequest.getPasswordCheck())) {
-            return "비밀번호가 일치하지 않습니다.";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse<>(false, "비밀번호가 일치하지 않습니다.", null));
         }
 
-        // 에러가 존재하지 않을 시 joinRequest 통해서 회원가입 완료
-        joinService.securityJoin(joinRequest);
+        memberService.securityJoin(joinRequest);
 
-        // 회원가입 시 홈 화면으로 이동
-        return "redirect:/jwt-login";
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ApiResponse<>(true, "회원가입 성공", null));
     }
+
     @PostMapping("/login")
-    public String login(@RequestBody RequestLoginDto loginRequest){
+    public ResponseEntity<ApiResponse<String>> login(@RequestBody RequestLoginDto loginRequest){
 
-        Member member = joinService.login(loginRequest);
+        Member member = memberService.login(loginRequest);
 
-        if(member==null){
-            return "ID 또는 비밀번호가 일치하지 않습니다!";
+        if(member == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ApiResponse<>(false, "ID 또는 비밀번호가 일치하지 않습니다!", null));
         }
 
         String token = jwtUtil.createJwt(member.getUsername(), String.valueOf(member.getRole()), member.getName());
-        return token;
+
+        return ResponseEntity.ok(new ApiResponse<>(true, "로그인 성공", token));
     }
 
     @GetMapping("/info")
-    public String memberInfo(Authentication auth, Model model) {
+    public ResponseEntity<ApiResponse<Member>> memberInfo(Authentication auth) {
 
-        System.out.println("auth = " + auth);
-
-        // CustomUserDetails를 사용하여 로그인된 사용자의 정보를 가져옴
         CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
         Member loginMember = userDetails.getMember();
 
-        return "ID : " + loginMember.getUsername() + "\n이름 : " + loginMember.getName() + "\nrole : " + loginMember.getRole();
+        return ResponseEntity.ok(new ApiResponse<>(true, "회원 정보 조회 성공", loginMember));
     }
 
     @GetMapping("/admin")
-    public String adminPage(Model model) {
-
-        return "인가 성공!";
+    public ResponseEntity<ApiResponse<String>> adminPage() {
+        return ResponseEntity.ok(new ApiResponse<>(true, "인가 성공!", null));
     }
-
 }

@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/usedtrad
+    url: jdbc:postgresql://localhost:5432/Trade_DB
     username: owner
     password: 1234
     driver-class-name: org.postgresql.Driver
@@ -18,6 +18,19 @@ spring:
   mvc:
     locale:
       timezone: Asia/Seoul
+  file:
+    upload:
+      path:
+        txt: C:/대학/졸작/test_chat/
+
+  logging:
+    level:
+      org.springframework.web.socket: DEBUG
+      org.springframework.messaging.simp: DEBUG
+      org.springframework.web: DEBUG
 
 server:
   port: 8001
+
+
+

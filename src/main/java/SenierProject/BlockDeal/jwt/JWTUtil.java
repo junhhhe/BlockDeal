@@ -52,8 +52,8 @@ public class JWTUtil {
             return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date(System.currentTimeMillis() - CLOCK_SKEW));
         } catch(Exception e){
             System.err.println("Error extracting expiration date from token: " + e.getMessage());
+            return true;
         }
-        return true;
     }
 
     // 모든 클레임 추출

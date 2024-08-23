@@ -14,31 +14,10 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class JoinService {
+public class MemberService {
 
     private final MemberJpaRepository memberJpaRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    /*//회원가입 로직
-    public void joinProcess(RequestJoinDto requestJoinDto){
-
-        String username = requestJoinDto.getUsername();
-        String password = requestJoinDto.getPassword();
-
-        Boolean isExist = memberJpaRepository.existsByUsername(username);
-
-        if(isExist){
-
-            return;
-        }
-
-        Member data = new Member();
-        data.setUsername(username);
-        data.setPassword(bCryptPasswordEncoder.encode(password));
-        data.setRole("ROLE_ADMIN");
-
-        memberJpaRepository.save(data);
-    }*/
 
     public boolean checkLoginIdDuplicate(String username){
         return memberJpaRepository.existsByUsername(username);
