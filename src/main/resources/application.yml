@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/Trade_DB
-    username: owner
-    password: 1234
+    url: jdbc:postgresql://localhost:5432/
+    username: 
+    password: 
     driver-class-name: org.postgresql.Driver
   jpa:
     open-in-view: false
