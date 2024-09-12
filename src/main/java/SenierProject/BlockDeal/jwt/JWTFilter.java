@@ -57,6 +57,8 @@ public class JWTFilter extends OncePerRequestFilter {
             String username = jwtUtil.getUsername(token);
             String role = jwtUtil.getRole(token);
             String name = jwtUtil.getName(token);
+            String nickname = jwtUtil.getNickname(token);
+            String email = jwtUtil.getEmail(token);
 
             //Member member = Member.builder().username(username).password("temppassword").role(role).build();
             Member member = new Member();
@@ -66,6 +68,8 @@ public class JWTFilter extends OncePerRequestFilter {
             member.setPassword("임시 비밀번호");
             member.setRole(MemberRole.valueOf(role));
             member.setName(name);
+            member.setNickname(nickname);
+            member.setEmail(email);
 
 
             //UserDetails에 회원 정보 객체 담기

@@ -42,13 +42,21 @@ public class JWTUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("name", String.class);
     }
 
+    public String getNickname(String token) {
+
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("nickname", String.class);
+    }
+
+    public String getEmail(String token) {
+
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("email", String.class);
+    }
+
     //토큰 내용(Payload) 인증 메소드
     // 토큰이 소멸 (유효기간 만료) 하였는지 검증 메서드
     public Boolean isExpired(String token) {
 
         try{
-            //Date expiration = extractAllClaims(token).getExpiration();
-            //return expiration.before(new Date(System.currentTimeMillis() - CLOCK_SKEW));
             return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date(System.currentTimeMillis() - CLOCK_SKEW));
         } catch(Exception e){
             System.err.println("Error extracting expiration date from token: " + e.getMessage());
@@ -67,12 +75,14 @@ public class JWTUtil {
     }
 
     //토근 생성
-    public String createJwt(String username, String role, String name) {
+    public String createJwt(String username, String role, String name, String nickname, String email) {
 
         return Jwts.builder()
                 .claim("username", username)
                 .claim("role", role)
                 .claim("name", name)
+                .claim("nickname", nickname)
+                .claim("email", email)
                 .issuedAt(new Date(System.currentTimeMillis())) //생성일자
                 .expiration(new Date(System.currentTimeMillis()+ EXPIRATION_TIME)) //만료 일자
                 .signWith(secretKey)

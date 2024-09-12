@@ -1,0 +1,128 @@
+/* 전자제품 글씨에 상단 마진 추가 */
+h1 {
+    margin-top: 200px; /* 원하는 공간 크기만큼 마진을 추가 */
+    text-align: center; /* 텍스트 중앙 정렬 */
+    font-size: 24px; /* 필요에 따라 글씨 크기 조정 */
+    font-weight: bold;
+}
+
+/* 카테고리 페이지 전체 레이아웃 설정 */
+.category-container {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 가로로 5개 아이템 표시 */
+    gap: 20px; /* 카드 사이 간격 */
+    padding: 20px; /* 컨테이너 패딩 */
+    justify-items: center; /* 아이템 중앙 정렬 */
+}
+
+/* 카테고리 아이템 스타일링 */
+.category-item {
+    width: 100%; /* 아이템 가로 크기 부모에 맞게 */
+    max-width: 250px; /* 최대 너비 제한 */
+    text-align: center; /* 텍스트 중앙 정렬 */
+    border: 1px solid #ddd; /* 외곽선 */
+    border-radius: 10px; /* 테두리 둥글게 */
+    overflow: hidden; /* 아이템 크기 넘어가는 부분 숨김 */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* 부드러운 크기 변환과 그림자 효과 */
+    background-color: #f9f9f9; /* 배경색 추가 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 살짝의 그림자 효과 추가 */
+    cursor: pointer; /* 클릭 가능 커서 표시 */
+}
+
+/* Hover 시 살짝 확대되는 효과 */
+.category-item:hover {
+    transform: scale(1.05); /* 마우스 오버 시 확대 */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* 그림자 강화 */
+}
+
+/* 이미지 스타일 */
+.category-image {
+    width: 100%; /* 이미지가 부모 요소에 맞춰지게 함 */
+    height: 150px; /* 고정 높이 */
+    object-fit: cover; /* 이미지 비율 유지하며 크기에 맞게 채움 */
+    transition: opacity 0.3s ease, transform 0.3s ease; /* 마우스 오버 시 부드러운 애니메이션 */
+}
+
+.category-item:hover .category-image {
+    opacity: 0.9; /* 마우스 오버 시 이미지 약간 어두워짐 */
+    transform: scale(1.02); /* 이미지도 살짝 확대 */
+}
+
+/* 카테고리 이름 스타일 */
+.category-item h2 {
+    margin: 10px 0;
+    font-size: 18px;
+    color: #333;
+    font-weight: bold; /* 글씨 굵게 */
+}
+
+/* 추가 텍스트 스타일링 (설명이 있다면) */
+.category-item p {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+/* 필터 버튼 스타일 */
+.filter-buttons {
+    display: flex;
+    gap: 10px; /* 버튼 사이의 간격 */
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+
+.filter-buttons button {
+    background-color: transparent; /* 배경을 투명하게 설정 */
+    color: black;
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s ease; /* 글씨 색상에 대한 호버 효과 */
+    font-size: 16px; /* 글씨 크기 조정 (필요시) */
+    font-weight: bold; /* 글씨 굵게 설정 (필요시) */
+}
+
+.filter-buttons button:hover {
+    background-color: #0056b3;
+}
+
+/* 작은 화면을 위한 반응형 디자인 */
+@media (max-width: 1024px) {
+    .category-container {
+        grid-template-columns: repeat(3, 1fr); /* 중간 크기 화면에서는 3개의 상품씩 표시 */
+    }
+}
+
+@media (max-width: 600px) {
+    .category-container {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* 작은 화면에서 카드 크기 축소 */
+    }
+    .category-item {
+        max-width: 100%; /* 카드 최대 너비 조정 */
+    }
+    .category-image {
+        height: 120px; /* 작은 화면에 맞게 이미지 높이 축소 */
+    }
+}
+
+/* 필터 버튼을 작은 화면에서 레이아웃 조정 */
+@media (max-width: 600px) {
+    .filter-buttons {
+        justify-content: center; /* 작은 화면에서는 버튼들을 가운데 정렬 */
+    }
+}
+
+/* 카테고리 캐러셀 크기 조정 */
+.category .image-carousel {
+    height: 200px;  /* 캐러셀 높이를 200px로 설정 */
+    width: 100vw;  /* 가로를 화면 너비에 맞게 최대로 설정 */
+    margin: 50px auto 0 auto;  /* 캐러셀 위에 50px의 간격 추가 */
+    display: flex;
+    justify-content: center; /* 캐러셀 이미지가 가운데에 위치하도록 설정 */
+}
+
+.category .image-carousel img {
+    width: 100%;  /* 이미지의 가로를 캐러셀의 너비에 맞춤 */
+    height: 100%;  /* 이미지의 높이를 캐러셀 높이에 맞춤 */
+    object-fit: cover;  /* 이미지를 비율에 맞게 잘라서 채움 */
+}

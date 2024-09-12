@@ -6,8 +6,8 @@ import SenierProject.BlockDeal.dto.RequestJoinDto;
 import SenierProject.BlockDeal.dto.RequestLoginDto;
 import SenierProject.BlockDeal.entity.Member;
 import SenierProject.BlockDeal.jwt.JWTUtil;
-import SenierProject.BlockDeal.repository.MemberJpaRepository;
 import SenierProject.BlockDeal.service.MemberService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +27,6 @@ public class MemberController {
 
     private final MemberService memberService;
     private final JWTUtil jwtUtil;
-    private final MemberJpaRepository memberJpaRepository;
 
     @GetMapping("/")
     public ResponseEntity<ApiResponse<String>> home() {
@@ -66,6 +65,12 @@ public class MemberController {
                     .body(new ApiResponse<>(false, "비밀번호가 일치하지 않습니다.", null));
         }
 
+        // 이메일 검증 추가
+        if (joinRequest.getEmail() == null || joinRequest.getEmail().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse<>(false, "이메일을 입력해주세요.", null));
+        }
+
         memberService.securityJoin(joinRequest);
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -82,16 +87,23 @@ public class MemberController {
                     .body(new ApiResponse<>(false, "ID 또는 비밀번호가 일치하지 않습니다!", null));
         }
 
-        String token = jwtUtil.createJwt(member.getUsername(), String.valueOf(member.getRole()), member.getName());
+        String token = jwtUtil.createJwt(member.getUsername(), String.valueOf(member.getRole()), member.getName(), member.getNickname(), member.getEmail());
 
         return ResponseEntity.ok(new ApiResponse<>(true, "로그인 성공", token));
     }
 
     @GetMapping("/info")
+    @Transactional
     public ResponseEntity<ApiResponse<Member>> memberInfo(Authentication auth) {
 
         CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
         Member loginMember = userDetails.getMember();
+
+        // 로그로 값 확인
+        System.out.println("Member nickname: " + loginMember.getNickname());
+        System.out.println("Member email: " + loginMember.getEmail());
+        System.out.println("Member name:" + loginMember.getName());
+        System.out.println("Member username: " + loginMember.getUsername());
 
         return ResponseEntity.ok(new ApiResponse<>(true, "회원 정보 조회 성공", loginMember));
     }

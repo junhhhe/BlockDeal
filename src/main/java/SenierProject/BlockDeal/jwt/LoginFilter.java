@@ -45,6 +45,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter{
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         String username = customUserDetails.getUsername();
         String name = customUserDetails.getName();
+        String nickname = customUserDetails.getNickname();
+        String email = customUserDetails.getEmail();
 
         //role 추출
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
@@ -53,7 +55,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter{
         String role = auth.getAuthority();
 
         // JWTUtil에 token 생성 요청
-        String token = jwtUtil.createJwt(username, role, name);
+        String token = jwtUtil.createJwt(username, role, name, nickname, email);
 
         // JWT를 response에 담아서 응답 (header 부분에)
         // key : "Authorization"

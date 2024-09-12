@@ -4,12 +4,19 @@ spring:
     username: owner
     password: 1234
     driver-class-name: org.postgresql.Driver
+
   jpa:
     open-in-view: false
-    show-sql: true
     hibernate:
       ddl-auto: update
       use-new-id-generator-mapping: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect  # PostgreSQL에 맞는 Hibernate 방언 사용
+        jdbc.time_zone: Asia/Seoul  # 타임존 문제 해결
+
+  show-sql: true  # 실행되는 SQL 쿼리를 로그에 출력
+  format-sql: true  # SQL 쿼리 출력 형식을 보기 좋게
 
   jwt :
     header: Authorization
