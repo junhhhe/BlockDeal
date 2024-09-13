@@ -13,6 +13,7 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final MemberJpaRepository memberRepository;
+    //테스트
 
     // 리뷰 남기기
     public void leaveReview(String buyerUsername, Long sellerId, Review review) {
