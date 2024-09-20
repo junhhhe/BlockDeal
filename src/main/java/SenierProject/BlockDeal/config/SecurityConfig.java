@@ -63,9 +63,9 @@ public class SecurityConfig {
 
         //경로별 인가 작업
         http.authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/api/users","/api/users/login", "/api/users/join", "api/products/categories").permitAll() // 회원가입, 로그인 인증 X
+                        .requestMatchers("/api/users","/api/users/login", "/api/users/join", "/api/products/**").permitAll() // 회원가입, 로그인 인증 X
                         .requestMatchers("/api/users/admin").hasRole("ADMIN")// 특정 권한을 가지는 사용자만 접근
-                        .requestMatchers("/api/users/info", "/api/products/my-products", "/api/products/register", "/api/products/{productsId}/wishlist").hasRole("USER")
+                        .requestMatchers("/api/users/info", "/api/products/my-products", "/api/products/add", "/api/products/{productsId}/wishlist").hasRole("USER")
                         .requestMatchers("/ws/**").authenticated() // WebSocket 엔드포인트
                         .anyRequest().authenticated()); // 그 외 요청들은 인증된 사용자 (유효한 jwt를 가지고 있는)만 접근
 

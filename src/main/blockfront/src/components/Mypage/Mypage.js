@@ -8,7 +8,6 @@ const Mypage = () => {
     const [error, setError] = useState('');
     const [wishlist, setWishlist] = useState([]);  // 찜 목록 상태
     const [products, setProducts] = useState([]);  // 등록한 상품 목록 상태
-    const [newPassword, setNewPassword] = useState('');  // 비밀번호 변경 상태
     const [profileImage, setProfileImage] = useState('');  // 프로필 이미지 상태
     const [loading, setLoading] = useState(true); // 로딩 상태
     const navigate = useNavigate(); // 페이지 이동을 위한 네비게이션 설정
@@ -19,8 +18,8 @@ const Mypage = () => {
             const response = await axios.get('/api/users/info');
             const userData = response.data.data;
             setUser(userData);
-            setWishlist(userData.wishlist || []); //찜목록 설정
-            setProfileImage(userData.profileImage || 'https://via.placeholder.com/150');
+            setWishlist(userData.wishlist || []); // 찜 목록 설정
+            setProfileImage(userData.profileImage || 'https://via.placeholder.com/150');  // 기본 이미지 설정
         } catch (err) {
             setError('사용자 정보를 가져오는 데 실패했습니다.');
         } finally {
@@ -35,22 +34,6 @@ const Mypage = () => {
             setProducts(response.data); // 상품 목록 설정
         } catch (err) {
             setError('상품 목록을 가져오는 데 실패했습니다.');
-        }
-    };
-
-    // 비밀번호 변경 함수
-    const handlePasswordChange = async () => {
-        if (!newPassword) {
-            alert('새 비밀번호를 입력해주세요.');
-            return;
-        }
-
-        try {
-            await axios.put('/api/users/update-password', { newPassword });
-            alert('비밀번호가 성공적으로 변경되었습니다.');
-            setNewPassword('');  // 비밀번호 입력란 초기화
-        } catch (err) {
-            setError('비밀번호 변경에 실패했습니다.');
         }
     };
 
@@ -75,11 +58,6 @@ const Mypage = () => {
     return (
         <div className="mypage-container">
             <ProfileSection user={user} profileImage={profileImage} />
-            <PasswordChangeSection
-                newPassword={newPassword}
-                onPasswordChange={setNewPassword}
-                handlePasswordChange={handlePasswordChange}
-            />
             <WishlistSection wishlist={wishlist} />
             <ProductSection products={products} goToProductRegister={goToProductRegister} /> {/* 등록한 상품 목록 섹션 */}
         </div>
@@ -95,21 +73,6 @@ const ProfileSection = ({ user, profileImage }) => (
             <p className="email">이메일: {user.email}</p>
             <p className="nickname">닉네임: {user.nickname}</p>
         </div>
-    </div>
-);
-
-
-// 비밀번호 변경 섹션 컴포넌트
-const PasswordChangeSection = ({ newPassword, onPasswordChange, handlePasswordChange }) => (
-    <div className="password-change-section">
-        <h3>비밀번호 변경</h3>
-        <input
-            type="password"
-            placeholder="새 비밀번호"
-            value={newPassword}
-            onChange={(e) => onPasswordChange(e.target.value)}
-        />
-        <button onClick={handlePasswordChange}>비밀번호 변경</button>
     </div>
 );
 
@@ -132,8 +95,11 @@ const WishlistSection = ({ wishlist }) => (
 // 찜한 상품 항목 컴포넌트
 const WishlistItem = ({ item }) => (
     <li className="wishlist-item">
-        <img src={item.image} alt={item.name} className="wishlist-image" />
-        <p>{item.name}</p>
+        <img src={item.imageUrl} alt={item.title} className="wishlist-image" />
+        <div className="wishlist-details">
+            <p>{item.title}</p>
+            <p>{item.price.toLocaleString()}원</p>
+        </div>
     </li>
 );
 
@@ -142,9 +108,6 @@ const ProductSection = ({ products, goToProductRegister }) => (
     <div className="product-section">
         <div className="section-header">
             <h3>내가 등록한 상품</h3>
-            <button onClick={goToProductRegister} className="product-register-button">
-                상품 등록
-            </button>
         </div>
         {products.length > 0 ? (
             <ul className="product-list">
@@ -155,15 +118,18 @@ const ProductSection = ({ products, goToProductRegister }) => (
         ) : (
             <p>등록한 상품이 없습니다.</p>
         )}
+        <button onClick={goToProductRegister}>상품 등록하기</button>
     </div>
 );
 
 // 등록한 상품 항목 컴포넌트
 const ProductItem = ({ product }) => (
     <li className="product-item">
-        <img src={product.image} alt={product.name} className="product-image" />
-        <p>{product.name}</p>
-        <p>가격: {product.price}</p>
+        <img src={product.imageUrl} alt={product.title} className="product-image" />
+        <div className="product-details">
+            <p>{product.title}</p>
+            <p>{product.price.toLocaleString()}원</p>
+        </div>
     </li>
 );
 

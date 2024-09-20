@@ -8,7 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @Service
@@ -18,6 +20,7 @@ public class MemberService {
 
     private final MemberJpaRepository memberJpaRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final FileUploadService fileUploadService;
 
     public boolean checkLoginIdDuplicate(String username){
         return memberJpaRepository.existsByUsername(username);
@@ -50,6 +53,19 @@ public class MemberService {
 
         Optional<Member> findMember = memberJpaRepository.findById(memberId);
         return findMember.orElse(null);
+    }
 
+    // 프로필 이미지 업데이트
+    @Transactional
+    public void updateProfileImage(String username, MultipartFile imageFile) throws IOException {
+        Member member = Optional.ofNullable(memberJpaRepository.findByUsername(username))
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다."));
+
+        if (!imageFile.isEmpty()) {
+            String fileName = fileUploadService.saveFile(imageFile);  // 파일 업로드 서비스 호출
+            member.setProfileImageUrl(fileName);  // 프로필 이미지 URL 설정
+        }
+
+        memberJpaRepository.save(member);  // 사용자 프로필 업데이트
     }
 }

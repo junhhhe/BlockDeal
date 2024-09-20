@@ -35,9 +35,17 @@ public class Member extends Base{
     @Column(name = "email", nullable = false)
     private String email;
 
+    // 프로필 이미지 URL 필드 추가
+    @Column(name = "profile_image_url")
+    private String profileImageUrl;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
     private MemberRole role;
+
+    // 평균 평점 필드 추가
+    @Column(name = "average_rating", nullable = true)
+    private Double averageRating;
 
     @CreatedDate
     @Column(name = "created_at", updatable = false)

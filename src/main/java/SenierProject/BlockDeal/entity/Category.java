@@ -1,6 +1,7 @@
 package SenierProject.BlockDeal.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,6 +27,7 @@ public class Category {
     private String name;
 
     @OneToMany(mappedBy = "category", fetch = FetchType.EAGER)
+    @JsonIgnore  // products는 필요할 때만 가져오도록 하고 직렬화에서 제외
     private List<Product> products;  // 카테고리에 속한 상품들
 
 }

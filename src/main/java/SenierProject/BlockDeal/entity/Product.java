@@ -1,10 +1,13 @@
 package SenierProject.BlockDeal.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tbl_products")
@@ -19,6 +22,8 @@ public class Product extends Base {
     private String description;
     private BigDecimal price;
 
+    private String imageUrl;
+
     @Enumerated(EnumType.STRING)
     private ProductStatus status;
 
@@ -26,14 +31,17 @@ public class Product extends Base {
     @JoinColumn(name = "seller_id", nullable = false)
     private Member seller;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    private List<Review> reviews;
-
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    private List<Wishlist> wishlists;
-
-    @ManyToOne  // 하나의 카테고리에는 여러 상품이 있을 수 있다 (다대일 관계)
+    @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
+    @JsonIgnore // 직렬화에서 제외하여 순환 참조 방지
     private Category category;  // 상품의 카테고리
+
+    @CreatedDate
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
 }

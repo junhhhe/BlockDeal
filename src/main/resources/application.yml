@@ -22,19 +22,25 @@ spring:
     header: Authorization
     secret: efnsoifh32y9t8y4rghefjdgivfoehfwe9t4hrefjvr9gt4guaerivjqir39tguerifvgwrdfjeowjoeoASFeo9283GRERgjhfv3i9138NDVSIREg
     token-validity-in-seconds:
+
   mvc:
+    static-path-pattern: /uploads/**
     locale:
       timezone: Asia/Seoul
-  file:
-    upload:
-      path:
-        txt: C:/대학/졸작/test_chat/
+  servlet:
+    multipart:
+      enabled: true  # 파일 업로드 활성화
+      max-file-size: 10MB  # 업로드할 수 있는 파일의 최대 크기
+      max-request-size: 10MB  # 요청의 최대 크기
 
   logging:
     level:
       org.springframework.web.socket: DEBUG
       org.springframework.messaging.simp: DEBUG
       org.springframework.web: DEBUG
+  web:
+    resources:
+      static-locations: file:///C:/대학/졸작/project/image/
 
 server:
   port: 8001

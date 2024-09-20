@@ -1,0 +1,94 @@
+/* 상품 등록 페이지 전체 컨테이너 */
+.add-product-container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 제목 스타일 */
+.add-product-container h1 {
+    text-align: center;
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+/* 폼 내부 스타일 */
+.add-product-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* 각 필드 사이의 간격 */
+}
+
+/* 폼 필드 컨테이너 */
+.add-product-form div {
+    display: flex;
+    flex-direction: column;
+}
+
+/* 라벨 스타일 */
+.add-product-form label {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #555;
+}
+
+/* 입력 필드 스타일 */
+.add-product-form input,
+.add-product-form select,
+.add-product-form textarea {
+    padding: 12px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 100%;
+    transition: border-color 0.3s ease;
+}
+
+/* 텍스트 영역 스타일 */
+.add-product-form textarea {
+    resize: none;
+}
+
+/* 입력 필드 포커스 시 스타일 */
+.add-product-form input:focus,
+.add-product-form select:focus,
+.add-product-form textarea:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* 상품 등록 버튼 스타일 */
+.add-product-button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: block;
+    width: 100%;
+    max-width: 200px;
+    margin: 20px auto;
+    text-align: center;
+}
+
+/* 상품 등록 버튼에 마우스를 올렸을 때 색상 변경 */
+.add-product-button:hover {
+    background-color: #0056b3;
+}
+
+/* 에러 메시지 스타일 (필요시 사용) */
+.error-message {
+    color: red;
+    font-size: 0.9rem;
+    margin-top: -10px;
+}

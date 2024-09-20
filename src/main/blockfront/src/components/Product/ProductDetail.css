@@ -1,0 +1,147 @@
+.product-detail-container {
+    display: flex;
+    flex-direction: column;
+    margin: 20px;
+    align-items: center; /* 전체 상품 정보를 가운데 정렬 */
+}
+
+.product-card {
+    display: flex;
+    flex-direction: row; /* 이미지를 왼쪽, 정보를 오른쪽에 배치 */
+    align-items: flex-start; /* 상단 정렬 */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+    max-width: 1200px;
+    width: 100%;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 카드에 약간의 그림자 추가 */
+}
+
+.product-image-container {
+    flex: 1;
+    text-align: center;
+    margin-right: 20px;
+}
+
+.product-image {
+    width: 100%;
+    max-width: 400px; /* 최대 400px로 설정하여 이미지 크기 제한 */
+    height: auto;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.product-info {
+    flex: 2; /* 정보 부분이 더 많은 비율을 차지하도록 설정 */
+    padding: 20px;
+    text-align: left;
+}
+
+.product-title {
+    font-size: 28px;
+    margin-bottom: 10px;
+    font-weight: bold; /* 제목을 더 두껍게 강조 */
+}
+
+.product-price {
+    font-size: 22px;
+    color: #d9534f;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.product-description {
+    margin-bottom: 20px;
+    font-size: 16px;
+    line-height: 1.5; /* 설명의 가독성을 위해 줄 간격을 늘림 */
+}
+
+.product-seller {
+    margin-bottom: 20px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #555;
+}
+
+.product-buttons {
+    display: flex;
+    flex-direction: row; /* 버튼들을 가로로 나열 */
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.action-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    background-color: #007bff;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* 버튼 색상이 부드럽게 전환되도록 추가 */
+}
+
+.action-button:hover {
+    background-color: #0056b3; /* 버튼에 마우스 올렸을 때 색상 변경 */
+}
+
+.buy-button {
+    background-color: #28a745;
+}
+
+.buy-button:hover {
+    background-color: #218838;
+}
+
+.related-products {
+    margin-top: 40px;
+    width: 100%;
+    max-width: 1200px;
+    text-align: left;
+}
+
+.related-products-list {
+    display: flex;
+    flex-wrap: wrap; /* 연관 상품이 한 줄에 꽉 차면 자동으로 다음 줄로 넘김 */
+    gap: 20px;
+}
+
+.related-product-card {
+    flex: 1 1 calc(25% - 20px); /* 4개의 상품을 한 줄에 배치 (여유 간격 포함) */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    background-color: #fff;
+    transition: box-shadow 0.3s ease;
+}
+
+.related-product-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 연관 상품에 마우스를 올리면 약간의 그림자 추가 */
+}
+
+.related-product-image {
+    width: 100%;
+    max-width: 150px;
+    height: auto;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+.related-product-info {
+    text-align: center;
+}
+
+.related-product-title {
+    font-size: 18px;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.related-product-description {
+    font-size: 14px;
+    color: #666;
+}
