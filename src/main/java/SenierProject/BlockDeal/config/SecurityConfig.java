@@ -4,6 +4,7 @@ import SenierProject.BlockDeal.jwt.JWTFilter;
 import SenierProject.BlockDeal.jwt.JWTUtil;
 import SenierProject.BlockDeal.jwt.LoginFilter;
 import SenierProject.BlockDeal.jwt.MemberRole;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +15,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -22,7 +24,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -32,6 +33,11 @@ public class SecurityConfig {
     //AuthenticationManager가 인자로 받을 AuthenticationConfiguraion 객체 생성자 주입
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JWTUtil jwtUtil;
+
+    @PostConstruct
+    public void init() {
+        SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
+    }
 
     //AuthenticationManager Bean 등록
     @Bean
@@ -49,27 +55,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        /*http
-                .cors((cors) -> cors
-                        .configurationSource(new CorsConfigurationSource(){
-
-                            @Override
-                            public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-
-                                CorsConfiguration configuration = new CorsConfiguration();
-
-                                configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
-                                configuration.setAllowedMethods(Collections.singletonList("*"));
-                                configuration.setAllowCredentials(true);
-                                configuration.setAllowedHeaders(Collections.singletonList("*"));
-                                configuration.setMaxAge(3600L);
-
-                                configuration.setExposedHeaders(Collections.singletonList("Authorization"));
-
-                                return configuration;
-                            }
-                        }));*/
-
         // CORS 설정 활성화
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
@@ -84,13 +69,14 @@ public class SecurityConfig {
 
         //경로별 인가 작업
         http.authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/api/users","/api/users/login", "/api/users/join").permitAll() // 회원가입, 로그인 인증 X
+                        .requestMatchers("/api/users","/api/users/login", "/api/users/join", "/api/products/**").permitAll() // 회원가입, 로그인 인증 X
                         .requestMatchers("/api/users/admin").hasRole("ADMIN")// 특정 권한을 가지는 사용자만 접근
-                        .requestMatchers("/ws/**").authenticated() // WebSocket 엔드포인트
+                        .requestMatchers("/api/users/info", "/api/products/my-products", "/api/products/add", "/api/products/{productsId}", "api/wishlist/**").hasRole("USER")
+                        .requestMatchers("/ws/**").permitAll() // WebSocket 엔드포인트
                         .anyRequest().authenticated()); // 그 외 요청들은 인증된 사용자 (유효한 jwt를 가지고 있는)만 접근
 
         //JWTFilter 등록, 로그인 필터 전에 동작
-        http.addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
+        http.addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         //필터 추가 LoginFilter()는 인자를 받음 (AuthenticationManager() 메소드에 authenticationConfiguration 객체를 넣어야 함) 따라서 등록 필요
         http.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
@@ -106,7 +92,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:8001"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3001"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
@@ -117,4 +103,5 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
 }

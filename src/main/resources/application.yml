@@ -4,30 +4,45 @@ spring:
     username: 
     password: 
     driver-class-name: org.postgresql.Driver
+
   jpa:
     open-in-view: false
-    show-sql: true
     hibernate:
       ddl-auto: update
       use-new-id-generator-mapping: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect  # PostgreSQL에 맞는 Hibernate 방언 사용
+        jdbc.time_zone: Asia/Seoul  # 타임존 문제 해결
+
+  show-sql: true  # 실행되는 SQL 쿼리를 로그에 출력
+  format-sql: true  # SQL 쿼리 출력 형식을 보기 좋게
 
   jwt :
     header: Authorization
     secret: efnsoifh32y9t8y4rghefjdgivfoehfwe9t4hrefjvr9gt4guaerivjqir39tguerifvgwrdfjeowjoeoASFeo9283GRERgjhfv3i9138NDVSIREg
     token-validity-in-seconds:
+
   mvc:
+    static-path-pattern: /uploads/**
     locale:
       timezone: Asia/Seoul
-  file:
-    upload:
-      path:
-        txt: C:/대학/졸작/test_chat/
+  servlet:
+    multipart:
+      enabled: true  # 파일 업로드 활성화
+      max-file-size: 10MB  # 업로드할 수 있는 파일의 최대 크기
+      max-request-size: 10MB  # 요청의 최대 크기
 
   logging:
     level:
       org.springframework.web.socket: DEBUG
       org.springframework.messaging.simp: DEBUG
       org.springframework.web: DEBUG
+      SenierProject.BlockDeal.config.JwtChannelInterceptor: DEBUG
+
+  web:
+    resources:
+      static-locations: file:///C:/대학/졸작/project/image/
 
 server:
   port: 8001

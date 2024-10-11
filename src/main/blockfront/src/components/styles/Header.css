@@ -1,0 +1,193 @@
+header {
+  background-color: #f8f8f8;
+  padding: 10px 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.main-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo img {
+  height: 40px;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  position: relative; /* 검색 내역을 검색창 아래에 고정하기 위해 relative 설정 */
+}
+
+.search-bar input {
+  padding: 5px;
+  margin-right: 10px;
+  width: 200px; /* 검색창 너비 조정 */
+  border: 1px solid #ddd;
+  border-radius: 4px; /* 둥근 모서리 */
+}
+
+.search-bar input:focus {
+  border-color: #007bff; /* 포커스 시 테두리 색 변경 */
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.25); /* 포커스 시 그림자 */
+}
+
+.search-bar button {
+  padding: 5px 10px;
+  background-color: #000000; /* 검은색 배경 */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.search-bar button:hover {
+  background-color: #333333; /* 호버 시 어두운 회색 */
+}
+
+/* 검색 내역 스타일 */
+.search-history {
+  position: absolute;
+  top: 45px; /* 검색창 바로 아래에 위치 */
+  left: 0;
+  width: 100%;
+  background-color: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  max-height: 200px; /* 최대 높이 설정 */
+  overflow-y: auto; /* 스크롤 가능하게 설정 */
+}
+
+.search-history ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.search-history li {
+  display: flex; /* 삭제 버튼과 검색어를 나란히 배치 */
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+
+.search-history li:hover {
+  background-color: #f5f5f5;
+}
+
+.search-history li span {
+  flex-grow: 1;
+  cursor: pointer;
+}
+
+.search-history li span:hover {
+  text-decoration: underline;
+}
+
+.search-history li button {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+}
+
+.search-history li button:hover {
+  color: red;
+}
+
+.search-history li:last-child {
+  border-bottom: none; /* 마지막 항목의 경계선 제거 */
+}
+
+/* 최근 검색어 없을 때 */
+.no-history {
+  padding: 10px;
+  text-align: center;
+  color: #777;
+}
+
+.clear-history {
+  text-align: right;
+  padding: 10px;
+}
+
+.clear-history button {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+}
+
+.clear-history button:hover {
+  color: red;
+}
+
+/* 카테고리 관련 스타일 */
+.price-filter select {
+  padding: 5px;
+  margin-left: 20px;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 15px;
+}
+
+.nav-links li {
+  position: relative; /* 하위 메뉴 위치를 위해 추가 */
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #333;
+}
+
+.nav-links a:hover {
+  color: #007bff;
+}
+
+/* 하위 카테고리 기본적으로 숨김 */
+.sub-category {
+  display: none;
+  position: absolute;
+  top: 100%; /* 부모 메뉴 아래에 위치 */
+  left: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  list-style: none;
+  padding: 10px;
+  margin: 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 150px; /* 하위 카테고리의 너비 */
+  z-index: 1000;
+}
+
+/* 하위 카테고리 항목 */
+.sub-category li {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.sub-category li:last-child {
+  border-bottom: none; /* 마지막 항목의 밑줄 제거 */
+}
+
+.sub-category li a {
+  color: #333;
+  text-decoration: none;
+}
+
+.sub-category li a:hover {
+  color: #007bff;
+}
+
+/* 마우스를 카테고리 메뉴에 올리면 하위 카테고리 표시 */
+.category-menu:hover .sub-category {
+  display: block;
+}

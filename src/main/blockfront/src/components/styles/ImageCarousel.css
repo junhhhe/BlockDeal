@@ -1,0 +1,51 @@
+.image-carousel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.image-carousel img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+.image-carousel button {
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #000;
+    z-index: 1;
+    background-color: rgba(255, 255, 255, 0.5); /* 반투명 배경색 추가 */
+    border-radius: 50%; /* 둥근 버튼 모양 */
+    padding: 10px; /* 버튼 크기 조정 */
+}
+
+.image-carousel .prev {
+    left: 10px;
+}
+
+.image-carousel .next {
+    right: 10px;
+}
+
+/* 버튼 스타일을 화살표 아이콘처럼 보이게 함 */
+.image-carousel .prev::before {
+    content: '<'; /* 화살표 아이콘 */
+    font-size: 24px;
+    color: #000;
+}
+
+.image-carousel .next::before {
+    content: '>'; /* 화살표 아이콘 */
+    font-size: 24px;
+    color: #000;
+}

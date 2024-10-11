@@ -1,0 +1,203 @@
+.mypage-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 프로필 섹션 */
+.profile-section {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+.profile-image {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    margin-right: 20px;
+    object-fit: cover;
+    border: 2px solid #ddd;
+}
+
+.profile-details {
+    flex-grow: 1;
+}
+
+.profile-details h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.profile-details p {
+    margin: 5px 0;
+    font-size: 16px;
+    color: #666;
+}
+
+.profile-details p.email {
+    margin-bottom: 8px;
+}
+
+.profile-details p strong {
+    color: #333;
+}
+
+/* 비밀번호 변경 섹션 */
+.password-change-section,
+.wishlist-section,
+.product-section {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+.password-change-section h3,
+.wishlist-section h3,
+.product-section h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.password-change-section input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.password-change-section button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+    text-align: center;
+}
+
+.password-change-section button:hover {
+    background-color: #0056b3;
+}
+
+/* 찜한 목록 섹션 */
+.wishlist-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.wishlist-section li {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.wishlist-section li:last-child {
+    border-bottom: none;
+}
+
+.wishlist-item img {
+    width: 50px;
+    height: 50px;
+    border-radius: 5px;
+    margin-right: 20px;
+    object-fit: cover;
+}
+
+.wishlist-item p {
+    margin: 0;
+    font-size: 16px;
+    color: #333;
+}
+
+/* 에러 메세지 */
+.error-message {
+    padding: 20px;
+    background-color: #ffe0e0;
+    color: #ff4d4d;
+    border: 1px solid #ff4d4d;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* 등록한 상품 섹션 */
+.product-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.product-section li {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.product-section li:last-child {
+    border-bottom: none;
+}
+
+.product-item img {
+    width: 50px;
+    height: 50px;
+    border-radius: 5px;
+    margin-right: 20px;
+    object-fit: cover;
+}
+
+.product-item p {
+    margin: 0;
+    font-size: 16px;
+    color: #333;
+}
+
+/* 내가 등록한 상품 섹션 관련 */
+.section-header {
+    display: flex;
+    justify-content: space-between; /* 제목과 버튼을 양 끝에 배치 */
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+/* 상품 등록 버튼 */
+.product-register-button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.product-register-button:hover {
+    background-color: #0056b3;
+}
+
+.product-section {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
