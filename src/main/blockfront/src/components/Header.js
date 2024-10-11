@@ -62,7 +62,7 @@ function Header({ onSearch, isAuthenticated, isAdmin, handleLogout }) {
                         onMouseEnter={() => setShowSubCategories(true)}
                         onMouseLeave={() => setShowSubCategories(false)}
                     >
-                        <Link to="/category">카테고리</Link>
+                        <Link to="/category/1">카테고리</Link>
                         {showSubCategories && (
                             <ul className="sub-category">
                                 {categories.length > 0 ? (
@@ -78,7 +78,8 @@ function Header({ onSearch, isAuthenticated, isAdmin, handleLogout }) {
                         )}
                     </li>
                     <li>
-                        <Link to="/chat">채팅</Link>
+                        {/* 채팅 페이지 경로를 `/chatlist`로 변경 */}
+                        <Link to="/chatlist">채팅</Link>
                     </li>
                     <li>
                         <Link to="/mypage">마이페이지</Link>

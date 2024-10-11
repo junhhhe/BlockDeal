@@ -1,45 +1,42 @@
 package SenierProject.BlockDeal.chat;
 
 import SenierProject.BlockDeal.entity.Member;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
-@Data
 @Entity
-@Table(name = "tbl_chat_message")
-@Builder
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@EntityListeners(value = {AuditingEntityListener.class})
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "tbl_chat_message")
 public class ChatMessage {
 
-    @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
-    // ChatRoom과의 관계 설정 (ManyToOne)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_room_id", nullable = false)
+    @JsonIgnore  // ChatRoom 필드의 직렬화를 방지
     private ChatRoom chatRoom;
 
-    // 메시지 작성자와의 관계 설정 (ManyToOne)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author_id", nullable = false)
-    private Member author;
+    @JoinColumn(name = "sender_id", nullable = false)
+    private Member sender;  // 메시지를 보낸 사용자
 
-    // 메시지 내용
-    @Column(name = "message", nullable = false)
-    private String message;
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String content;
 
-    // 메시지 생성 시간
-    @CreatedDate
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
+    @Column(nullable = false)
+    private LocalDateTime sentAt;
+
+    public ChatMessage(ChatRoom chatRoom, Member sender, String content) {
+        this.chatRoom = chatRoom;
+        this.sender = sender;
+        this.content = content;
+        this.sentAt = LocalDateTime.now();
+    }
 }

@@ -28,6 +28,7 @@ function CategoryPage() {
     };
 
     useEffect(() => {
+        console.log("Current categoryId:", categoryId);  // categoryId 값 확인
         fetchProducts();  // 페이지가 로드될 때마다 제품 목록 가져오기
     }, [categoryId]);  // categoryId가 바뀔 때마다 새로 API 호출
 
@@ -90,8 +91,8 @@ function CategoryPage() {
             <div className="category-container">
                 {products.length > 0 ? (
                     products.map((product) => (
-                        <div key={product.id} className="category-item" onClick={() => handleClick(product.productId)}>
-                            <img src={product.image} alt={product.title} className="category-image" />
+                        <div key={product.id} className="category-item" onClick={() => handleClick(product.id)}>
+                            <img src={product.imageUrl || '/default-image.png'} alt={product.title} className="category-image" />
                             <h2>{product.title}</h2>
                             <p>가격: {product.price.toLocaleString()}원</p>
                         </div>

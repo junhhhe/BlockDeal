@@ -17,7 +17,6 @@ import java.util.Optional;
 public class ProductService {
 
     private final ProductRepository productRepository;
-    private final WishlistRepository wishlistRepository;
     private final MemberJpaRepository memberRepository;
     private final CategoryRepository categoryRepository;
     private final FileUploadService fileUploadService;
@@ -27,15 +26,16 @@ public class ProductService {
         return categoryRepository.findAll();
     }
 
-    public Category findCategoryById(Long categoryId) {
-        return categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 카테고리를 찾을 수 없습니다."));
-    }
-
     // 상품 상세 정보 가져오기
     public Product getProductById(Long productId) {
         return productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
+    }
+
+    // 특정 카테고리 조회 추가
+    public Category getCategoryById(Long categoryId) {
+        return categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다."));
     }
 
     @Transactional
@@ -44,7 +44,10 @@ public class ProductService {
         Member seller = Optional.ofNullable(memberRepository.findByUsername(sellerUsername))
                 .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다."));
 
-        // 카테고리 조회
+        // 카테고리 조회 - ProductDto에 Category 정보가 포함되어 있다고 가정
+        if (productDto.getCategory() == null || productDto.getCategory().getId() == null) {
+            throw new IllegalArgumentException("카테고리 정보가 필요합니다.");
+        }
         Category category = categoryRepository.findById(productDto.getCategory().getId())
                 .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다."));
 
@@ -65,6 +68,14 @@ public class ProductService {
 
         // 상품 저장
         productRepository.save(product);
+    }
+
+
+    // 같은 카테고리의 연관 상품 조회 (현재 상품 제외, 5개 최신순)
+    public List<Product> getRelatedProducts(Long productId) {
+        Product currentProduct = getProductById(productId);
+        return productRepository.findTop5ByCategoryAndIdNotAndStatusOrderByCreatedAtDesc(
+                currentProduct.getCategory(), productId, ProductStatus.ON_SALE);
     }
 
     public List<Product> getOnSaleProductsByCategory(Long categoryId) {
@@ -92,4 +103,16 @@ public class ProductService {
         Member seller = memberRepository.findByUsername(sellerUsername);
         return productRepository.findBySeller(seller);
     }
+
+    //상품삭제
+    @Transactional
+    public void deleteProduct(Long productId) {
+        Optional<Product> productOpt = productRepository.findById(productId);
+        if (!productOpt.isPresent()) {
+            throw new IllegalArgumentException("해당 상품을 찾을 수 없습니다.");
+        }
+        Product product = productOpt.get();
+        productRepository.delete(product);
+    }
+
 }

@@ -18,12 +18,23 @@ const Mypage = () => {
             const response = await axios.get('/api/users/info');
             const userData = response.data.data;
             setUser(userData);
-            setWishlist(userData.wishlist || []); // 찜 목록 설정
             setProfileImage(userData.profileImage || 'https://via.placeholder.com/150');  // 기본 이미지 설정
         } catch (err) {
             setError('사용자 정보를 가져오는 데 실패했습니다.');
         } finally {
             setLoading(false); // 데이터 로딩 완료
+        }
+    };
+
+    // 사용자가 찜한 목록 가져오기
+    const fetchWishlist = async () => {
+        try {
+            const response = await axios.get('/api/wishlist'); // 찜 목록 API 호출
+            console.log('Wishlist Data:', response.data); // 가져온 데이터 구조 확인
+            setWishlist(response.data.data || []); // 찜 목록 상태 설정
+        } catch (err) {
+            console.error('찜 목록을 가져오는 데 실패했습니다:', err);
+            setError('찜 목록을 가져오는 데 실패했습니다.');
         }
     };
 
@@ -39,6 +50,7 @@ const Mypage = () => {
 
     useEffect(() => {
         fetchUserData();
+        fetchWishlist();  // 마운트 시 찜 목록 로드
         fetchUserProducts(); // 마운트 시 사용자가 등록한 상품 목록 로드
     }, []);
 
@@ -134,3 +146,4 @@ const ProductItem = ({ product }) => (
 );
 
 export default Mypage;
+
