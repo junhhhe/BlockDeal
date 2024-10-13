@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/Trade_DB
-    username: owner
-    password: 1234
+    url: jdbc:postgresql://localhost:5432/trade
+    username: myuser
+    password: kang80224@
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -38,14 +38,13 @@ spring:
       org.springframework.web.socket: DEBUG
       org.springframework.messaging.simp: DEBUG
       org.springframework.web: DEBUG
-      SenierProject.BlockDeal.config.JwtChannelInterceptor: DEBUG
-
   web:
     resources:
-      static-locations: file:///C:/대학/졸작/project/image/
+      static-locations: file:///C:/Users/uimo1/OneDrive/바탕 화면/사진
+
 
 server:
-  port: 8001
+  port: 8080
 
 
 
