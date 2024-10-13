@@ -16,8 +16,7 @@ public class Product extends Base {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "product_id", nullable = false)
-    private Long id;
+    private Long productId;
 
     private String title;
     private String description;
@@ -36,5 +35,13 @@ public class Product extends Base {
     @JoinColumn(name = "category_id", nullable = false)
     @JsonIgnore // 직렬화에서 제외하여 순환 참조 방지
     private Category category;  // 상품의 카테고리
+
+    @CreatedDate
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
 }

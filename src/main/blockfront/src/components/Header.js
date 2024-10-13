@@ -1,68 +1,77 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from '../components/services/axiosConfig'; // axios 설정 파일
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBars, faTimes, faSearch } from '@fortawesome/free-solid-svg-icons';
+import axios from '../components/services/axiosConfig';
 import './styles/Header.css';
 
 function Header({ onSearch, isAuthenticated, isAdmin, handleLogout }) {
     const [query, setQuery] = useState('');
-    const [showSubCategories, setShowSubCategories] = useState(false); // 하위 카테고리 표시 상태
-    const [searchHistory, setSearchHistory] = useState([]); // 검색 내역 저장
-    const [showSearchHistory, setShowSearchHistory] = useState(false); // 검색 내역 표시 상태
-    const [categories, setCategories] = useState([]); // 카테고리 목록 상태
+    const [showSubCategories, setShowSubCategories] = useState(false);
+    const [searchHistory, setSearchHistory] = useState([]);
+    const [showSearchHistory, setShowSearchHistory] = useState(false);
+    const [categories, setCategories] = useState([]);
 
-    // 카테고리 목록을 백엔드에서 가져오는 함수
+    useEffect(() => {
+        fetchCategories();
+        const savedHistory = localStorage.getItem('searchHistory');
+        if (savedHistory) {
+            setSearchHistory(JSON.parse(savedHistory));
+        }
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+    }, [searchHistory]);
+
     const fetchCategories = async () => {
         try {
-            const response = await axios.get('/api/products/categories');  // 카테고리 목록 API 호출
-            setCategories(response.data);  // 가져온 카테고리 목록 저장
+            const response = await axios.get('/api/products/categories');
+            setCategories(response.data);
         } catch (error) {
             console.error('카테고리 정보를 가져오는 데 실패했습니다:', error);
         }
     };
 
-    useEffect(() => {
-        fetchCategories();  // 컴포넌트 로드 시 카테고리 목록 가져오기
-    }, []);
-
     const handleSearch = (searchQuery) => {
         const searchValue = searchQuery || query;
         if (searchValue.trim()) {
-            setSearchHistory([searchValue, ...searchHistory.filter(item => item !== searchValue)]); // 중복 제거 후 추가
-            onSearch(searchValue); // 검색 함수 실행
-            setShowSearchHistory(false); // 검색 후 내역 숨김
+            setSearchHistory(prev => [searchValue, ...prev.filter(item => item !== searchValue)].slice(0, 10));
+            onSearch(searchValue);
+            setShowSearchHistory(false);
+            setQuery('');
         }
     };
 
     const handleInputChange = (e) => {
         setQuery(e.target.value);
-        setShowSearchHistory(true); // 검색어 입력 시 최근 검색어 표시
+        setShowSearchHistory(true);
+    };
+
+    const handleBlur = () => {
+        setTimeout(() => setShowSearchHistory(false), 200);
+    };
+
+    const clearSearchHistory = () => {
+        setSearchHistory([]);
+        localStorage.removeItem('searchHistory');
+    };
+
+    const removeSearchItem = (item) => {
+        setSearchHistory(prev => prev.filter(historyItem => historyItem !== item));
     };
 
     return (
         <header>
             <nav className="main-nav">
-                <Link to="/" className="logo">
-                    <img src='/BDLogo.png' alt="Logo" />
-                </Link>
-                <div className="search-bar">
-                    <input
-                        type="text"
-                        placeholder="검색"
-                        value={query}
-                        onChange={handleInputChange}
-                    />
-                    <button onClick={() => handleSearch(query)}>검색</button>
-                </div>
                 <ul className="nav-links">
-                    <li>
-                        <Link to="/">홈</Link>
-                    </li>
-                    <li
-                        className="category-menu"
+                    <li className="category-menu"
                         onMouseEnter={() => setShowSubCategories(true)}
                         onMouseLeave={() => setShowSubCategories(false)}
                     >
-                        <Link to="/category/1">카테고리</Link>
+                        <button className="category-button">
+                            <FontAwesomeIcon icon={faBars} />
+                        </button>
                         {showSubCategories && (
                             <ul className="sub-category">
                                 {categories.length > 0 ? (
@@ -77,32 +86,63 @@ function Header({ onSearch, isAuthenticated, isAdmin, handleLogout }) {
                             </ul>
                         )}
                     </li>
-                    <li>
-                        {/* 채팅 페이지 경로를 `/chatlist`로 변경 */}
-                        <Link to="/chatlist">채팅</Link>
-                    </li>
-                    <li>
-                        <Link to="/mypage">마이페이지</Link>
-                    </li>
-                    <li>
-                        <Link to="/cart">장바구니</Link>
-                    </li>
+                </ul>
 
+                <div className="logo-search-container">
+                    <Link to="/" className="logo">
+                        <img src='/BDLogo.png' alt="Logo" />
+                    </Link>
+                    <div className="search-bar">
+                        <input
+                            type="text"
+                            placeholder="검색"
+                            value={query}
+                            onChange={handleInputChange}
+                            onFocus={() => setShowSearchHistory(true)}
+                            onBlur={handleBlur}
+                        />
+                        <button onClick={() => handleSearch(query)}>
+                            <FontAwesomeIcon icon={faSearch} />
+                        </button>
+                        {showSearchHistory && (
+                            <div className="search-history-dropdown">
+                                <div className="search-history-header">
+                                    <span>최근 검색어</span>
+                                    <button onClick={clearSearchHistory}>전체삭제</button>
+                                </div>
+                                <ul className="search-history-list">
+                                    {searchHistory.length > 0 ? (
+                                        searchHistory.map((item, index) => (
+                                            <li key={index}>
+                                                <span onClick={() => handleSearch(item)}>{item}</span>
+                                                <FontAwesomeIcon
+                                                    icon={faTimes}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        removeSearchItem(item);
+                                                    }}
+                                                />
+                                            </li>
+                                        ))
+                                    ) : (
+                                        <li>최근 검색어가 없습니다</li>
+                                    )}
+                                </ul>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                <ul className="nav-links">
+                    <li><Link to="/chat">채팅</Link></li>
+                    <li><Link to="/mypage">마이페이지</Link></li>
                     {isAuthenticated ? (
                         <>
-                            <li>
-                                <button onClick={handleLogout}>로그아웃</button>
-                            </li>
-                            {isAdmin && (
-                                <li>
-                                    <Link to="/admin">관리자 페이지</Link>
-                                </li>
-                            )}
+                            <li><Link to="#" onClick={handleLogout}>로그아웃</Link></li>
+                            {isAdmin && <li><Link to="/admin">관리자 페이지</Link></li>}
                         </>
                     ) : (
-                        <li>
-                            <Link to="/login">로그인</Link>
-                        </li>
+                        <li><Link to="/login">로그인</Link></li>
                     )}
                 </ul>
             </nav>

@@ -3,6 +3,10 @@ package SenierProject.BlockDeal.entity;
 import SenierProject.BlockDeal.jwt.MemberRole;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
+import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
@@ -42,4 +46,12 @@ public class Member extends Base{
     // 평균 평점 필드 추가
     @Column(name = "average_rating", nullable = true)
     private Double averageRating;
+
+    @CreatedDate
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 }

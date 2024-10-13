@@ -17,13 +17,13 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
         Member memberData = memberJpaRepository.findByUsername(username);
 
-        if (memberData != null) {
+        if(memberData != null){
             return new CustomUserDetails(memberData);
         }
 
-        throw new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + username);
+        return null;
     }
 }
-

@@ -6,7 +6,6 @@ import SenierProject.BlockDeal.entity.Category;
 import SenierProject.BlockDeal.entity.Product;
 import SenierProject.BlockDeal.service.ProductService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -32,18 +31,6 @@ public class ProductController {
         return ResponseEntity.ok(categoryDtos);
     }
 
-    // 특정 카테고리 조회
-    @GetMapping("/category/{categoryId}")
-    public ResponseEntity<CategoryDto> getCategoryById(@PathVariable Long categoryId) {
-        try {
-            Category category = productService.getCategoryById(categoryId);
-            CategoryDto categoryDto = new CategoryDto(category);
-            return ResponseEntity.ok(categoryDto);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-    }
-
     // 상품 상세 조회
     @GetMapping("/{productId}")
     public ResponseEntity<ProductDto> getProductById(@PathVariable Long productId) {
@@ -52,14 +39,11 @@ public class ProductController {
         return ResponseEntity.ok(productDTO);
     }
 
-    // 같은 카테고리의 연관 상품 조회 (5개 최신순)
-    @GetMapping("/{productId}/related")
-    public ResponseEntity<List<ProductDto>> getRelatedProducts(@PathVariable Long productId) {
-        List<Product> relatedProducts = productService.getRelatedProducts(productId);
-        List<ProductDto> relatedProductDtos = relatedProducts.stream()
-                .map(ProductDto::new)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(relatedProductDtos);
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<CategoryDto> getCategoryById(@PathVariable Long categoryId) {
+        Category category = productService.findCategoryById(categoryId);  // 수정된 부분
+        CategoryDto categoryDto = new CategoryDto(category);
+        return ResponseEntity.ok(categoryDto);
     }
 
     // 특정 카테고리에서 판매중인 상품들만 조회
@@ -89,24 +73,6 @@ public class ProductController {
         }
     }
 
-
-    // 상품 삭제 API
-    @DeleteMapping("/del/{productId}")
-    public ResponseEntity<String> deleteProduct(@PathVariable Long productId, Authentication authentication) {
-        Product product = productService.getProductById(productId);
-        if (product == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 상품을 찾을 수 없습니다.");
-        }
-
-        String currentUsername = authentication != null ? authentication.getName() : null;
-        if (currentUsername == null || !currentUsername.equals(product.getSeller().getUsername())) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("상품 삭제 권한이 없습니다.");
-        }
-
-        productService.deleteProduct(productId);
-        return ResponseEntity.ok("상품이 성공적으로 삭제되었습니다.");
-    }
-
     // 판매 완료 처리
     @PutMapping("/{productId}/complete")
     public ResponseEntity<String> completeSale(@PathVariable Long productId) {
@@ -124,4 +90,6 @@ public class ProductController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(productDtos);
     }
+
+
 }

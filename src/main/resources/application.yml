@@ -40,11 +40,10 @@ spring:
       org.springframework.web: DEBUG
   web:
     resources:
-      static-locations: file:///C:/Users/uimo1/OneDrive/바탕 화면/사진
-
+      static-locations: file:///C:/대학/졸작/project/image/
 
 server:
-  port: 8080
+  port: 8001
 
 
 

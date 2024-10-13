@@ -6,14 +6,15 @@ import Mypage from './components/Mypage/Mypage';
 import LoginPage from './components/LoginPage/LoginPage';
 import SignUpPage from './components/LoginPage/SignUpPage'; // SignUpPage 추가
 import CartPage from './components/Cart/CartPage';
-import ChatList from './components/Chat/ChatList';  // 채팅방 목록 컴포넌트
-import ChatRoom from './components/Chat/ChatRoom';  // 채팅방 컴포넌트
+import ChatPage from './components/Chat/ChatPage';  // 채팅 페이지 컴포넌트 추가
+import ProductDetailPage from './components/Product/ProductDetail';  // 상품 상세 페이지
 import Electronics from './components/Category/Electronics';  // 전자제품 페이지
 import CategoryPage from './components/Category/CategoryPage';  // CategoryPage 컴포넌트를 불러옴
 import AddProduct from './components/Product/AddProductPage';  // 상품 등록 페이지 추가
 import ReviewForm from './components/Review/ReviewForm'; // 오타 수정 (ReviewPorm -> ReviewForm)
 import ReviewList from './components/Review/ReviewList';
 import ProductDetail from "./components/Product/ProductDetail";
+import Footer from "./components/Footer/Footer";
 
 function App() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -56,10 +57,7 @@ function App() {
                 <Route path="/signup" element={<SignUpPage />} />  {/* 회원가입 페이지 */}
                 <Route path="/mypage" element={isAuthenticated ? <Mypage /> : <Navigate to="/login" />} />
                 <Route path="/cart" element={isAuthenticated ? <CartPage /> : <Navigate to="/login" />} />
-
-                {/* 채팅 관련 라우트 설정 */}
-                <Route path="/chatlist" element={isAuthenticated ? <ChatList /> : <Navigate to="/login" />} /> {/* 경로를 /chatlist로 변경 */}
-                <Route path="/chat/room/:roomId" element={isAuthenticated ? <ChatRoom /> : <Navigate to="/login" />} />
+                <Route path="/chat" element={isAuthenticated ? <ChatPage /> : <Navigate to="/login" />} /> {/* 채팅 경로 */}
 
                 <Route path="/category/:categoryId" element={<CategoryPage />} />{/* 동적 카테고리 페이지 라우팅 설정 */}
                 <Route path="/category/electronics" element={<Electronics />} /> {/* 전자제품 카테고리 페이지 */}
@@ -71,6 +69,7 @@ function App() {
                 {/* 리뷰 목록 페이지 - 로그인하지 않아도 접근 가능 */}
                 <Route path="/reviews/:sellerId/list" element={<ReviewList />} />
             </Routes>
+            <Footer></Footer>
         </Router>
     );
 }

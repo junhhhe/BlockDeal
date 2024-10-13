@@ -15,6 +15,8 @@
   flex-grow: 1;
   margin: 0 20px;
   padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
 .hamburger-menu {
@@ -38,9 +40,80 @@
 
 .menu li {
   cursor: pointer;
+  padding: 10px 20px;
+  transition: background-color 0.3s ease;
+}
+
+.menu li:hover {
+  background-color: #555; /* 메뉴 아이템 호버 시 색상 변경 */
 }
 
 .welcome {
   text-align: center;
   margin: 50px 0;
+  font-size: 2rem; /* 글씨 크기 키움 */
+  font-weight: bold; /* 글씨를 두껍게 */
+  color: #333; /* 글씨 색상 변경 */
+}
+
+/* 추가 스타일 */
+.menu ul li a {
+  text-decoration: none; /* 링크의 밑줄 제거 */
+  color: white; /* 링크의 텍스트 색상 유지 */
+  transition: color 0.3s ease;
+}
+
+.menu ul li a:hover {
+  color: #ffc107; /* 링크 호버 시 색상 변경 */
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 8px;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+}
+
+.search-bar button {
+  padding: 8px 15px;
+  border: none;
+  background-color: #ffc107;
+  color: #333;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.search-bar button:hover {
+  background-color: #e0a800; /* 버튼 호버 시 색상 변경 */
+}
+
+.menu-toggle {
+  display: none; /* 기본적으로 숨김 */
+}
+
+@media (max-width: 768px) {
+  .menu ul {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .hamburger-menu {
+    display: block; /* 모바일 화면에서만 햄버거 메뉴 활성화 */
+  }
+
+  .menu-toggle {
+    display: block;
+    font-size: 1.8rem;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+
+  .menu {
+    display: none; /* 모바일에서는 기본적으로 메뉴가 숨겨짐 */
+  }
+
+  .menu.active {
+    display: block; /* 모바일 메뉴가 토글될 때 나타남 */
+  }
 }

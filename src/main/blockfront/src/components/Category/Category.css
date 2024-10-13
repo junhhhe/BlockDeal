@@ -27,6 +27,10 @@ h1 {
     background-color: #f9f9f9; /* 배경색 추가 */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 살짝의 그림자 효과 추가 */
     cursor: pointer; /* 클릭 가능 커서 표시 */
+    min-height: 350px; /* 최소 높이 설정 */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 /* Hover 시 살짝 확대되는 효과 */
@@ -41,6 +45,7 @@ h1 {
     height: 150px; /* 고정 높이 */
     object-fit: cover; /* 이미지 비율 유지하며 크기에 맞게 채움 */
     transition: opacity 0.3s ease, transform 0.3s ease; /* 마우스 오버 시 부드러운 애니메이션 */
+    background-color: #f0f0f0; /* 이미지가 없을 때 배경색 적용 */
 }
 
 .category-item:hover .category-image {
@@ -48,27 +53,38 @@ h1 {
     transform: scale(1.02); /* 이미지도 살짝 확대 */
 }
 
+/* 상품 정보 스타일 */
+.product-info {
+    padding: 10px;
+}
+
 /* 카테고리 이름 스타일 */
-.category-item h2 {
+.product-info h2 {
     margin: 10px 0;
     font-size: 18px;
     color: #333;
     font-weight: bold; /* 글씨 굵게 */
 }
 
-/* 추가 텍스트 스타일링 (설명이 있다면) */
-.category-item p {
+/* 추가 텍스트 스타일링 (가격) */
+.product-info p {
     font-size: 14px;
     color: #666;
     margin-bottom: 10px;
+}
+
+/* 필터 및 검색 바 전체 컨테이너 */
+.filter-container {
+    display: flex;
+    justify-content: space-between; /* 검색 바와 필터 버튼이 양쪽으로 배치되도록 설정 */
+    align-items: center; /* 세로 가운데 정렬 */
+    margin-bottom: 20px;
 }
 
 /* 필터 버튼 스타일 */
 .filter-buttons {
     display: flex;
     gap: 10px; /* 버튼 사이의 간격 */
-    justify-content: flex-end;
-    margin-bottom: 20px;
 }
 
 .filter-buttons button {
@@ -84,6 +100,43 @@ h1 {
 
 .filter-buttons button:hover {
     background-color: #0056b3;
+    color: white;
+}
+
+/* 검색 바 스타일 */
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* 입력 필드와 버튼 사이에 간격 추가 */
+    margin-right: 20px; /* 검색 바와 필터 버튼 사이에 마진 추가 */
+}
+
+.search-bar input {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 200px;
+}
+
+.search-bar button {
+    padding: 8px 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.search-bar button:hover {
+    background-color: #0056b3;
+}
+
+/* 작은 화면을 위한 검색 바 중앙 정렬 */
+@media (max-width: 600px) {
+    .search-bar {
+        justify-content: center; /* 작은 화면에서는 검색 바가 가운데 정렬 */
+        margin-right: 0; /* 작은 화면에서는 마진 제거 */
+    }
 }
 
 /* 작은 화면을 위한 반응형 디자인 */
