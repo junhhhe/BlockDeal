@@ -1,20 +1,20 @@
 package SenierProject.BlockDeal.jwt;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
-
 
 @Component
 public class JWTUtil {
@@ -24,72 +24,58 @@ public class JWTUtil {
     private final SecretKey secretKey;
     private final UserDetailsService userDetailsService;
 
-    // 생성자에서 secretkey 암호화(알고리즘: HS256)
-    public JWTUtil(@Value("${spring.jwt.secret}")String secret, UserDetailsService userDetailsService){
-
-        secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
+    // Constructor: HS256 알고리즘 기반 SecretKey 생성
+    public JWTUtil(@Value("${spring.jwt.secret}") String secret, UserDetailsService userDetailsService) {
+        this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         this.userDetailsService = userDetailsService;
     }
 
-    //토큰 내용(Payload) username 인증 메소드
-    public String getUsername(String token) {
-
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username", String.class);
-    }
-
-    //토큰 내용(payload) role 인증 메소드
-    public String getRole(String token) {
-
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
-    }
-
-    public String getName(String token) {
-
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("name", String.class);
-    }
-
-    public String getNickname(String token) {
-
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("nickname", String.class);
-    }
-
-    public String getEmail(String token) {
-
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("email", String.class);
-    }
-
-    // JWT 토큰에서 사용자 인증 정보 추출
-    public Authentication getAuthentication(String token) {
-        String username = getUsername(token);
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username); // 사용자 정보 로드
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-    }
-
-    //토큰 내용(Payload) 인증 메소드
-    // 토큰이 소멸 (유효기간 만료) 하였는지 검증 메서드
-    public Boolean isExpired(String token) {
-
-        try{
-            return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date(System.currentTimeMillis() - CLOCK_SKEW));
-        } catch(Exception e){
-            System.err.println("Error extracting expiration date from token: " + e.getMessage());
-            return true;
-        }
-    }
-
-    // 모든 클레임 추출
+    // 모든 클레임 추출 메서드
     private Claims extractAllClaims(String token) {
         try {
-            return Jwts.parser().verifyWith(secretKey).clockSkewSeconds(CLOCK_SKEW / 1000).build().parseSignedClaims(token).getPayload();
+            return Jwts.parser()
+                    .setSigningKey(secretKey)
+                    .setAllowedClockSkewSeconds(CLOCK_SKEW / 1000)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
         } catch (JwtException | IllegalArgumentException e) {
-            System.err.println("Error parsing JWT token: " + e.getMessage());
-            throw new IllegalArgumentException("Invalid token");
+            System.err.println("JWT 파싱 오류: " + e.getMessage());
+            throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
         }
     }
 
-    //토근 생성
-    public String createJwt(Long id, String username, String role, String name, String nickname, String email) {
+    // 토큰에서 사용자 이름 추출
+    public String getUsername(String token) {
+        return extractAllClaims(token).get("username", String.class);
+    }
 
+    // 토큰에서 역할(Role) 추출
+    public String getRole(String token) {
+        return extractAllClaims(token).get("role", String.class);
+    }
+
+    // 토큰이 만료되었는지 확인
+    public Boolean isExpired(String token) {
+        Date expiration = extractAllClaims(token).getExpiration();
+        return expiration.before(new Date(System.currentTimeMillis()));
+    }
+
+    // JWT 토큰에서 인증 정보 생성
+    public Authentication getAuthentication(String token) {
+        Claims claims = extractAllClaims(token);  // 토큰에서 클레임 추출
+
+        String username = claims.get("username", String.class);
+        if (username == null || username.isEmpty()) {
+            throw new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + username);
+        }
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        return new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities());
+    }
+
+    // JWT 토큰 생성 메서드
+    public String createJwt(Long id, String username, String role, String name, String nickname, String email) {
         return Jwts.builder()
                 .claim("id", id)
                 .claim("username", username)
@@ -97,8 +83,8 @@ public class JWTUtil {
                 .claim("name", name)
                 .claim("nickname", nickname)
                 .claim("email", email)
-                .issuedAt(new Date(System.currentTimeMillis())) //생성일자
-                .expiration(new Date(System.currentTimeMillis()+ EXPIRATION_TIME)) //만료 일자
+                .setIssuedAt(new Date(System.currentTimeMillis())) // 생성 시간
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME)) // 만료 시간
                 .signWith(secretKey)
                 .compact();
     }

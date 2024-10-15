@@ -1,5 +1,6 @@
 package SenierProject.BlockDeal.chat;
 
+import SenierProject.BlockDeal.chat.chatdto.MessageType;
 import SenierProject.BlockDeal.entity.Member;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -33,10 +34,20 @@ public class ChatMessage {
     @Column(nullable = false)
     private LocalDateTime sentAt;
 
-    public ChatMessage(ChatRoom chatRoom, Member sender, String content) {
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private MessageType type;
+
+    // 모든 필드를 포함한 생성자
+    public ChatMessage(ChatRoom chatRoom, Member sender, String content, MessageType type, LocalDateTime sentAt) {
         this.chatRoom = chatRoom;
         this.sender = sender;
         this.content = content;
-        this.sentAt = LocalDateTime.now();
+        this.type = type;
+        this.sentAt = sentAt;
+    }
+
+    public void setUser(Member member) {
+        this.sender = member;
     }
 }

@@ -19,12 +19,12 @@ public class ChatRoom {
     @Column(nullable = false)
     private String roomName;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user1_id", nullable = false)  // 외래 키 설정
     @JsonIgnore // 순환 참조 방지를 위해 JSON 직렬화에서 제외
     private Member user1;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user2_id", nullable = false)  // 외래 키 설정
     @JsonIgnore // 순환 참조 방지를 위해 JSON 직렬화에서 제외
     private Member user2;

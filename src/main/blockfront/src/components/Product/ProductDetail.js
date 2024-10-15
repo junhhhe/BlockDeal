@@ -62,14 +62,22 @@ const ProductDetail = () => {
                     Authorization: `Bearer ${token}`,
                 },
             });
+
             alert('상품이 찜 목록에 추가되었습니다.');
         } catch (error) {
             console.error('찜 목록 추가 오류:', error);
-            setError('찜 목록에 추가하는 데 실패했습니다.');
+
+            // 서버로부터 이미 존재하는 경우에 대한 응답 처리
+            if (error.response && error.response.status === 409) {
+                alert('이미 찜한 상품입니다.');
+            } else {
+                setError('찜 목록에 추가하는 데 실패했습니다.');
+            }
         } finally {
             setLoading(false);
         }
     };
+
 
     // 채팅 버튼 클릭 시 호출
     const handleStartChat = async () => {
@@ -88,6 +96,11 @@ const ProductDetail = () => {
 
         const buyerId = user?.id;
         const sellerId = product?.seller?.id;
+
+        // 로그 출력 추가 - 올바른 정보가 출력되는지 확인
+        console.log(`Logged in User (Buyer): ${JSON.stringify(user)}`);
+        console.log(`Product Seller: ${JSON.stringify(product.seller)}`);
+        console.log(`buyerId: ${buyerId}, sellerId: ${sellerId}, roomName: Chat_${user.username}_${product.seller.username}`);
 
         if (!buyerId || !sellerId) {
             alert('유효한 사용자 또는 판매자 정보가 없습니다.');

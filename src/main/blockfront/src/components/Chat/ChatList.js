@@ -1,57 +1,49 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom'; // useNavigate 훅을 추가
-import axios from '../services/axiosConfig';
-import AuthContext from '../services/AuthContext';
-import './ChatList.css';
+import { useNavigate } from 'react-router-dom';
+import axios from '../services/axiosConfig'; // axios 설정 파일
+import AuthContext from '../services/AuthContext'; // 인증 컨텍스트
+import './ChatList.css'; // CSS 파일
 
 function ChatList() {
-    const { user, loading } = useContext(AuthContext); // AuthContext에서 사용자 정보 가져오기
-    const [chatRooms, setChatRooms] = useState([]); // 초기값을 빈 배열로 설정
-    const navigate = useNavigate(); // useNavigate 훅 선언
+    const { user, loading } = useContext(AuthContext); // 사용자 정보 가져오기
+    const [chatRooms, setChatRooms] = useState([]); // 채팅방 목록 상태
+    const navigate = useNavigate(); // 네비게이션 훅
 
-    // 채팅방 목록을 가져오는 함수
     const fetchChatRooms = async () => {
-        if (!user) return; // 사용자 정보가 없으면 API 호출하지 않음
-
         try {
+            const token = localStorage.getItem('token'); // 토큰 가져오기
+            console.log("사용자 토큰:", token); // 토큰 확인
             const response = await axios.get('/api/chat/rooms', {
                 headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    Authorization: `Bearer ${token}`,
                 },
             });
-            console.log('채팅방 목록 API 응답:', response.data); // 응답 데이터 로그 추가
-
-            // API 응답 구조에서 data 필드의 값을 가져옴
-            const rooms = response.data.data; // response.data.data를 가져와야 함
-            setChatRooms(rooms); // 가져온 데이터를 설정
-        } catch (err) {
-            console.error('채팅방 목록 API 호출 오류:', err);
-            setChatRooms([]); // 오류 발생 시 빈 배열로 설정하여 안전하게 처리
+            console.log('채팅방 목록 API 응답:', response.data);
+            setChatRooms(response.data.data);
+        } catch (error) {
+            console.error('채팅방 목록 API 호출 오류:', error.response || error);
+            if (error.response && error.response.status === 401) {
+                alert('토큰이 만료되었습니다. 다시 로그인해 주세요.');
+                localStorage.removeItem('token'); // 만료된 토큰 제거
+                navigate('/login'); // 로그인 페이지로 리다이렉션
+            }
         }
     };
 
-
-    // 컴포넌트 마운트 시 채팅방 목록을 가져옴
     useEffect(() => {
-        fetchChatRooms();
+        if (user) {
+            fetchChatRooms(); // 사용자 정보가 있을 때만 API 호출
+        }
     }, [user]);
 
-    // 로딩 중이거나 데이터가 없을 때의 처리
-    if (loading) {
-        return <div>로딩 중...</div>;
-    }
+    if (loading) return <div>로딩 중...</div>; // 로딩 상태 표시
 
-    if (!user) {
-        return <div>사용자 정보가 없습니다. 로그인을 해주세요.</div>;
-    }
+    if (!user) return <div>사용자 정보가 없습니다. 로그인을 해주세요.</div>; // 사용자 정보 없을 때
 
-    if (chatRooms.length === 0) {
-        return <div>참여한 채팅방이 없습니다.</div>;
-    }
+    if (chatRooms.length === 0) return <div>참여한 채팅방이 없습니다.</div>; // 채팅방이 없을 때
 
-    // 채팅방 클릭 시 해당 채팅방으로 이동
     const handleRoomClick = (roomId) => {
-        navigate(`/chat/room/${roomId}`); // 채팅방 ID를 포함한 경로로 이동
+        navigate(`/chat/room/${roomId}`); // 채팅방으로 이동
     };
 
     return (
@@ -61,11 +53,10 @@ function ChatList() {
                 {chatRooms.map((room) => (
                     <li
                         key={room.id}
-                        onClick={() => handleRoomClick(room.id)} // 클릭 시 해당 채팅방으로 이동
-                        className="chat-room-item" // 스타일링을 위한 클래스 추가
-                        style={{ cursor: 'pointer' }} // 마우스 커서가 포인터로 변경되도록 스타일 설정
+                        onClick={() => handleRoomClick(room.id)}
+                        className="chat-room-item"
+                        style={{ cursor: 'pointer' }}
                     >
-                        {/* ChatRoomDto의 필드에 맞게 데이터 접근 */}
                         <p>채팅방 이름: {room.roomName ?? '알 수 없음'}</p>
                         <p>사용자 1: {room.user1 ?? '정보 없음'}</p>
                         <p>사용자 2: {room.user2 ?? '정보 없음'}</p>

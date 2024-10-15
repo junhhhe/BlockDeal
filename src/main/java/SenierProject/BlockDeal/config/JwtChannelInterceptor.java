@@ -1,23 +1,20 @@
 package SenierProject.BlockDeal.config;
 
-import SenierProject.BlockDeal.dto.CustomUserDetails;
-import SenierProject.BlockDeal.entity.Member;
 import SenierProject.BlockDeal.jwt.JWTUtil;
 import SenierProject.BlockDeal.service.MemberService;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.messaging.support.MessageHeaderAccessor;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.security.Principal;
 
 @Component
 @RequiredArgsConstructor
@@ -28,62 +25,33 @@ public class JwtChannelInterceptor implements ChannelInterceptor {
     private final MemberService memberService;
 
     @Override
-    public Message<?> preSend(@NonNull Message<?> message, @NonNull MessageChannel channel) {
-        StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
-        StompCommand command = accessor.getCommand();
-        log.info("현재 STOMP 명령어: {}", command);
+    public Message<?> preSend(Message<?> message, MessageChannel channel) {
+        StompHeaderAccessor accessor = MessageHeaderAccessor
+                .getAccessor(message, StompHeaderAccessor.class);
 
-        // 명령어별 처리 로직 추가
-        switch (command) {
-            case CONNECT:
-                handleConnect(accessor);
-                break;
-            case SUBSCRIBE:
-                log.info("사용자 구독 요청 처리");
-                break;
-            case SEND:
-                log.info("메시지 전송 요청 처리");
-                // 메시지 전송 시 현재 SecurityContextHolder의 인증 정보를 확인
-                log.info("현재 SecurityContextHolder 인증 정보: {}", SecurityContextHolder.getContext().getAuthentication());
-                break;
-            case DISCONNECT:
-                log.info("사용자 연결 해제 처리");
-                break;
-            default:
-                log.warn("알 수 없는 STOMP 명령어: {}", command);
-        }
-
-        return message;
-    }
-
-    private void handleConnect(StompHeaderAccessor accessor) {
-        List<String> authorization = accessor.getNativeHeader("Authorization");
-        if (authorization != null && !authorization.isEmpty()) {
-            String jwt = authorization.get(0).substring("Bearer ".length());
+        // 토큰을 핸드셰이크 세션에서 가져오기
+        String token = (String) accessor.getSessionAttributes().get("token");
+        if (token != null) {
             try {
-                if (!jwtUtil.isExpired(jwt)) {
-                    String username = jwtUtil.getUsername(jwt);
-                    log.info("JWT 토큰에서 추출한 사용자 이름: {}", username);
+                // JWT 토큰에서 인증 객체 생성
+                Authentication authentication = jwtUtil.getAuthentication(token);
 
-                    Member member = memberService.getUserByUsername(username);
-                    if (member != null) {
-                        CustomUserDetails userDetails = new CustomUserDetails(member);
-                        UsernamePasswordAuthenticationToken authentication =
-                                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                // SecurityContext에 설정
+                SecurityContext context = SecurityContextHolder.createEmptyContext();
+                context.setAuthentication(authentication);
+                SecurityContextHolder.setContext(context);
 
-                        SecurityContextHolder.getContext().setAuthentication(authentication);
-                        log.info("사용자 인증 성공 및 SecurityContextHolder에 설정: {}", authentication);
-                    } else {
-                        log.error("유효하지 않은 사용자입니다: {}", username);
-                    }
+                // Principal로 설정 (올바른 형변환)
+                if (authentication.getPrincipal() instanceof Principal) {
+                    accessor.setUser((Principal) authentication.getPrincipal());
                 } else {
-                    log.error("JWT 토큰이 만료되었습니다.");
+                    throw new IllegalStateException("인증 객체가 Principal이 아닙니다.");
                 }
+
             } catch (Exception e) {
-                log.error("JWT 검증 중 오류 발생: {}", e.getMessage());
+                throw new IllegalStateException("유효하지 않은 JWT 토큰입니다.", e);
             }
-        } else {
-            log.error("Authorization 헤더가 없습니다. JWT 토큰을 제공해야 합니다.");
         }
+        return message;
     }
 }
